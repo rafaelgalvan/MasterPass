@@ -8,6 +8,7 @@ package masterpass;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Iterator;
+import javax.swing.JOptionPane;
 /**
  *
  * @author rafael
@@ -17,15 +18,75 @@ public class SenhaJFrame extends javax.swing.JFrame {
     List<Senha> listaSenha;
     private int numeroGerado;
     /**
-     * Creates new form MainJFrame
+     * Creates new form SenhaJFrame
      */
     public SenhaJFrame()
     {
         initComponents();
         numeroGerado = 0;
-        listaSenha = new ArrayList<Senha>();
+        listaSenha = new ArrayList();
     }
-
+    
+    /*
+        Recebe um tipo de atendimento (char c) como parâmetro.
+    */
+    public Senha iteratorSenha(char c)
+    {
+        // Só entra no ArrayList se não estiver vazio
+        if (!listaSenha.isEmpty()) {
+            Senha se = listaSenha.stream()
+                    .filter((Senha objSenha) -> objSenha.getTipoSenha() == c)
+                    .findFirst().orElse(null);
+            listaSenha.remove(se);
+            
+            /* 
+                Itera sobre os elementos somente se não houver elementos de
+                um tipo específico (Prioritário, Comum ou Rápido)
+            */
+            if (se == null) {
+                Iterator<Senha> it = listaSenha.iterator();
+                while (it.hasNext()) {
+                    se = it.next();
+                    it.remove();
+                    return se;
+                }
+            }
+            
+            return se;
+        }
+        
+        return null;
+    }
+    
+    /*
+        Gera senha do cliente, insere no ArrayList
+        e exibe na tela a senha gerada.
+    */
+    private void gerarSenhaCliente(char c)
+    {
+        numeroGerado++;
+        Senha objSenha = new Senha(numeroGerado, c);
+        listaSenha.add(objSenha);
+        textSenhaGerada.setText(objSenha.toString());
+    }
+    
+    /*
+        Recupera a senha do cliente, remove do ArrayList
+        e exibe na tela a senha chamada e o caixa que a chamou.
+    */
+    private void chamarSenhaCliente(char c, String s)
+    {
+        Senha proximaSenha = iteratorSenha(c);
+        if (proximaSenha == null) {
+            JOptionPane.showMessageDialog(null,
+                    "Nenhum cliente aguardando atendimento.",
+                    "Atenção!",
+                    JOptionPane.INFORMATION_MESSAGE);
+        } else {
+            textSenhaEscolhida.setText(proximaSenha.toString());
+            textCaixaEscolhido.setText(s);
+        }
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -37,8 +98,8 @@ public class SenhaJFrame extends javax.swing.JFrame {
 
         jPanel1 = new javax.swing.JPanel();
         btnCaixa1 = new javax.swing.JButton();
-        btnCaixa2 = new javax.swing.JButton();
         btnCaixa3 = new javax.swing.JButton();
+        btnCaixa2 = new javax.swing.JButton();
         btnCaixa4 = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
         btnCaixaComum = new javax.swing.JButton();
@@ -49,9 +110,9 @@ public class SenhaJFrame extends javax.swing.JFrame {
         labelTipoAtendimento = new javax.swing.JLabel();
         labelClientes = new javax.swing.JLabel();
         labelCaixas = new javax.swing.JLabel();
-        jPanel3 = new javax.swing.JPanel();
-        labelSenhaEscolhida = new javax.swing.JLabel();
-        labelCaixaEscolhido = new javax.swing.JLabel();
+        jPanel4 = new javax.swing.JPanel();
+        textSenhaEscolhida = new javax.swing.JLabel();
+        textCaixaEscolhido = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("MasterPass");
@@ -62,15 +123,35 @@ public class SenhaJFrame extends javax.swing.JFrame {
 
         btnCaixa1.setFont(new java.awt.Font("Ubuntu", 1, 24)); // NOI18N
         btnCaixa1.setText("Caixa 1");
-
-        btnCaixa2.setFont(new java.awt.Font("Ubuntu", 1, 24)); // NOI18N
-        btnCaixa2.setText("Caixa 3");
+        btnCaixa1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCaixa1ActionPerformed(evt);
+            }
+        });
 
         btnCaixa3.setFont(new java.awt.Font("Ubuntu", 1, 24)); // NOI18N
-        btnCaixa3.setText("Caixa 2");
+        btnCaixa3.setText("Caixa 3");
+        btnCaixa3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCaixa3ActionPerformed(evt);
+            }
+        });
+
+        btnCaixa2.setFont(new java.awt.Font("Ubuntu", 1, 24)); // NOI18N
+        btnCaixa2.setText("Caixa 2");
+        btnCaixa2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCaixa2ActionPerformed(evt);
+            }
+        });
 
         btnCaixa4.setFont(new java.awt.Font("Ubuntu", 1, 24)); // NOI18N
         btnCaixa4.setText("Caixa 4");
+        btnCaixa4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCaixa4ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -80,10 +161,10 @@ public class SenhaJFrame extends javax.swing.JFrame {
                 .addGap(35, 35, 35)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(btnCaixa1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(btnCaixa2, javax.swing.GroupLayout.DEFAULT_SIZE, 125, Short.MAX_VALUE))
+                    .addComponent(btnCaixa3, javax.swing.GroupLayout.DEFAULT_SIZE, 125, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(btnCaixa3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btnCaixa2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(btnCaixa4, javax.swing.GroupLayout.DEFAULT_SIZE, 125, Short.MAX_VALUE))
                 .addGap(35, 35, 35))
         );
@@ -93,13 +174,13 @@ public class SenhaJFrame extends javax.swing.JFrame {
                 .addGap(35, 35, 35)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                        .addComponent(btnCaixa3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(btnCaixa2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGap(54, 54, 54)
                         .addComponent(btnCaixa4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                         .addComponent(btnCaixa1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGap(54, 54, 54)
-                        .addComponent(btnCaixa2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                        .addComponent(btnCaixa3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addGap(35, 35, 35))
         );
 
@@ -132,11 +213,13 @@ public class SenhaJFrame extends javax.swing.JFrame {
         });
 
         textSenhaGerada.setEditable(false);
+        textSenhaGerada.setFont(new java.awt.Font("Ubuntu", 1, 24)); // NOI18N
+        textSenhaGerada.setHorizontalAlignment(javax.swing.JTextField.CENTER);
 
-        labelSuaSenha.setFont(new java.awt.Font("Ubuntu", 1, 14)); // NOI18N
+        labelSuaSenha.setFont(new java.awt.Font("Ubuntu", 0, 16)); // NOI18N
         labelSuaSenha.setText("Sua Senha é:");
 
-        labelTipoAtendimento.setFont(new java.awt.Font("Ubuntu", 1, 18)); // NOI18N
+        labelTipoAtendimento.setFont(new java.awt.Font("Ubuntu", 0, 20)); // NOI18N
         labelTipoAtendimento.setText("Escolha seu tipo de atendimento");
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
@@ -172,45 +255,46 @@ public class SenhaJFrame extends javax.swing.JFrame {
                 .addGap(20, 20, 20)
                 .addComponent(labelSuaSenha)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(textSenhaGerada)
+                .addComponent(textSenhaGerada, javax.swing.GroupLayout.DEFAULT_SIZE, 46, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
         jPanel2Layout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {btnCaixaComum, btnCaixaPrioritario, btnCaixaRapido});
 
-        labelClientes.setFont(new java.awt.Font("Ubuntu", 1, 18)); // NOI18N
+        labelClientes.setFont(new java.awt.Font("Ubuntu", 0, 24)); // NOI18N
         labelClientes.setText("Para Clientes:");
 
-        labelCaixas.setFont(new java.awt.Font("Ubuntu", 1, 18)); // NOI18N
+        labelCaixas.setFont(new java.awt.Font("Ubuntu", 0, 24)); // NOI18N
         labelCaixas.setText("Para Caixas:");
 
-        jPanel3.setBorder(javax.swing.BorderFactory.createEtchedBorder(new java.awt.Color(102, 102, 102), new java.awt.Color(0, 0, 0)));
+        textSenhaEscolhida.setFont(new java.awt.Font("Ubuntu", 1, 48)); // NOI18N
+        textSenhaEscolhida.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        textSenhaEscolhida.setText("---");
 
-        labelSenhaEscolhida.setFont(new java.awt.Font("Ubuntu", 1, 36)); // NOI18N
-        labelSenhaEscolhida.setText("jLabel5");
+        textCaixaEscolhido.setFont(new java.awt.Font("Ubuntu", 1, 48)); // NOI18N
+        textCaixaEscolhido.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        textCaixaEscolhido.setText("---");
+        textCaixaEscolhido.setToolTipText("");
 
-        labelCaixaEscolhido.setFont(new java.awt.Font("Ubuntu", 1, 36)); // NOI18N
-        labelCaixaEscolhido.setText("jLabel6");
-
-        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
-        jPanel3.setLayout(jPanel3Layout);
-        jPanel3Layout.setHorizontalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
-                .addGap(273, 273, 273)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(labelCaixaEscolhido)
-                    .addComponent(labelSenhaEscolhida))
-                .addGap(273, 273, 273))
+        javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
+        jPanel4.setLayout(jPanel4Layout);
+        jPanel4Layout.setHorizontalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addGap(230, 230, 230)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(textSenhaEscolhida, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(textCaixaEscolhido, javax.swing.GroupLayout.DEFAULT_SIZE, 214, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
-        jPanel3Layout.setVerticalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel3Layout.createSequentialGroup()
-                .addGap(55, 55, 55)
-                .addComponent(labelSenhaEscolhida)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 80, Short.MAX_VALUE)
-                .addComponent(labelCaixaEscolhido)
-                .addGap(55, 55, 55))
+        jPanel4Layout.setVerticalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addGap(29, 29, 29)
+                .addComponent(textSenhaEscolhida, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(38, 38, 38)
+                .addComponent(textCaixaEscolhido, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(54, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -224,26 +308,26 @@ public class SenhaJFrame extends javax.swing.JFrame {
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 330, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(labelClientes))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 14, Short.MAX_VALUE)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 330, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(labelCaixas)))
-                    .addComponent(jPanel3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jPanel4, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(labelClientes)
                     .addComponent(labelCaixas))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 217, Short.MAX_VALUE)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, 217, Short.MAX_VALUE))
+                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 232, Short.MAX_VALUE)
+                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, 232, Short.MAX_VALUE))
                 .addContainerGap())
         );
 
@@ -251,25 +335,32 @@ public class SenhaJFrame extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnCaixaComumActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCaixaComumActionPerformed
-        numeroGerado++;
-        Senha objSenha = new Senha(numeroGerado, 'C');
-        listaSenha.add(objSenha);
-        textSenhaGerada.setText(objSenha.getTipoSenha() + "-" + objSenha.getNumeroSenha());
+        gerarSenhaCliente('C');
     }//GEN-LAST:event_btnCaixaComumActionPerformed
 
     private void btnCaixaRapidoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCaixaRapidoActionPerformed
-        numeroGerado++;
-        Senha objSenha = new Senha(numeroGerado, 'R');
-        listaSenha.add(objSenha);
-        textSenhaGerada.setText(objSenha.getTipoSenha() + "-" + objSenha.getNumeroSenha());
+        gerarSenhaCliente('R');
     }//GEN-LAST:event_btnCaixaRapidoActionPerformed
 
     private void btnCaixaPrioritarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCaixaPrioritarioActionPerformed
-        numeroGerado++;
-        Senha objSenha = new Senha(numeroGerado, 'P');
-        listaSenha.add(objSenha);
-        textSenhaGerada.setText(objSenha.getTipoSenha() + "-" + objSenha.getNumeroSenha());
+        gerarSenhaCliente('P');
     }//GEN-LAST:event_btnCaixaPrioritarioActionPerformed
+
+    private void btnCaixa1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCaixa1ActionPerformed
+        chamarSenhaCliente('P', "Caixa 1");
+    }//GEN-LAST:event_btnCaixa1ActionPerformed
+
+    private void btnCaixa2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCaixa2ActionPerformed
+        chamarSenhaCliente('R', "Caixa 2");
+    }//GEN-LAST:event_btnCaixa2ActionPerformed
+
+    private void btnCaixa3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCaixa3ActionPerformed
+        chamarSenhaCliente('R', "Caixa 3");
+    }//GEN-LAST:event_btnCaixa3ActionPerformed
+
+    private void btnCaixa4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCaixa4ActionPerformed
+        chamarSenhaCliente('C', "Caixa 4");
+    }//GEN-LAST:event_btnCaixa4ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -319,13 +410,13 @@ public class SenhaJFrame extends javax.swing.JFrame {
     private javax.swing.JButton btnCaixaRapido;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
-    private javax.swing.JPanel jPanel3;
-    private javax.swing.JLabel labelCaixaEscolhido;
+    private javax.swing.JPanel jPanel4;
     private javax.swing.JLabel labelCaixas;
     private javax.swing.JLabel labelClientes;
-    private javax.swing.JLabel labelSenhaEscolhida;
     private javax.swing.JLabel labelSuaSenha;
     private javax.swing.JLabel labelTipoAtendimento;
+    private javax.swing.JLabel textCaixaEscolhido;
+    private javax.swing.JLabel textSenhaEscolhida;
     private javax.swing.JTextField textSenhaGerada;
     // End of variables declaration//GEN-END:variables
 }

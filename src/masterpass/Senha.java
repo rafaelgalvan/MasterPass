@@ -37,4 +37,9 @@ public class Senha {
     {
         this.tipoSenha = tipoSenha;
     }
+    
+    @Override
+    public String toString(){
+        return this.tipoSenha + "-" + this.numeroSenha;
+    }
 }
