@@ -36,12 +36,13 @@ public class SenhaJFrame extends javax.swing.JFrame {
         if (!listaSenha.isEmpty()) {
             Senha se = listaSenha.stream()
                     .filter((Senha objSenha) -> objSenha.getTipoSenha() == c)
-                    .findFirst().orElse(null);
+                    .findFirst().orElse(null); 
             listaSenha.remove(se);
             
             /* 
                 Itera sobre os elementos somente se não houver elementos de
-                um tipo específico (Prioritário, Comum ou Rápido)
+                um tipo específico (Prioritário, Comum ou Rápido), conforme
+                resultado do filtro acima.
             */
             if (se == null) {
                 Iterator<Senha> it = listaSenha.iterator();
@@ -74,7 +75,7 @@ public class SenhaJFrame extends javax.swing.JFrame {
         Recupera a senha do cliente, remove do ArrayList
         e exibe na tela a senha chamada e o caixa que a chamou.
     */
-    private void chamarSenhaCliente(char c, String s)
+    private void chamarSenhaCliente(char c, int numeroCaixa)
     {
         Senha proximaSenha = iteratorSenha(c);
         if (proximaSenha == null) {
@@ -84,7 +85,7 @@ public class SenhaJFrame extends javax.swing.JFrame {
                     JOptionPane.INFORMATION_MESSAGE);
         } else {
             textSenhaEscolhida.setText(proximaSenha.toString());
-            textCaixaEscolhido.setText(s);
+            textCaixaEscolhido.setText("Caixa " + numeroCaixa);
         }
     }
     /**
@@ -347,19 +348,19 @@ public class SenhaJFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_btnCaixaPrioritarioActionPerformed
 
     private void btnCaixa1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCaixa1ActionPerformed
-        chamarSenhaCliente('P', "Caixa 1");
+        chamarSenhaCliente('P', 1);
     }//GEN-LAST:event_btnCaixa1ActionPerformed
 
     private void btnCaixa2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCaixa2ActionPerformed
-        chamarSenhaCliente('R', "Caixa 2");
+        chamarSenhaCliente('R', 2);
     }//GEN-LAST:event_btnCaixa2ActionPerformed
 
     private void btnCaixa3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCaixa3ActionPerformed
-        chamarSenhaCliente('R', "Caixa 3");
+        chamarSenhaCliente('R', 3);
     }//GEN-LAST:event_btnCaixa3ActionPerformed
 
     private void btnCaixa4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCaixa4ActionPerformed
-        chamarSenhaCliente('C', "Caixa 4");
+        chamarSenhaCliente('C', 4);
     }//GEN-LAST:event_btnCaixa4ActionPerformed
 
     /**
